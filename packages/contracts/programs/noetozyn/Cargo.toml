@@ -1,0 +1,17 @@
+[package]
+name = "noetozyn"
+version = "0.1.0"
+description = "NoetoZyn biometric privacy firewall program"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "noetozyn"
+
+[features]
+no-entrypoint = []
+cpi = ["no-entrypoint"]
+idl-build = ["anchor-lang/idl-build"]
+
+[dependencies]
+anchor-lang = "1.2.0"
