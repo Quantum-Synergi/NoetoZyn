@@ -74,13 +74,27 @@ If an unauthorized external application attempts to force-inject semantic payloa
 
 ---
 
-## Vetted Arena Novelty (Colosseum Copilot Audit)
+## Competitive Landscape (Colosseum Copilot Search)
 
-To ensure absolute marketplace dominance, NoetoZyn was rigorously checked by the **Colosseum Copilot 8-Step Deep Research Validation engine** across its database of over **5,400+ historical hackathon submissions**.
+A Colosseum Copilot project search (`/search/projects`) for terms matching NoetoZyn's
+core concept — biometric privacy firewall, health telemetry, wearable sensor, zero-knowledge
+proof — returned 6 total results, none of which are an exact match:
 
-* **Core Novelty Index:** **94.6% Direct Market Differentiation Vector** (Global Clearance).
-* **Historical Gaps Identified:** Prior hackathon entries within the Solana health spaces focus almost exclusively on *consumer data aggregation*, medical credential tokenization (NFTs), or fitness motivation tracking apps (e.g., Pulse, MediCert). 
-* **The NoetoZyn Advantage:** NoetoZyn is the single recorded architecture in the history of the Arena designed purely as an active, defense-oriented **cryptographic shield** rather than a database harvester.
+| Project | Similarity | What it does |
+|---|---|---|
+| [Pulse](https://colosseum.com/projects/explore/pulse) | 0.055 | Stakes crypto on health goals, tracked via wearables and ZK-verified habits |
+| [Radr](https://colosseum.com/projects/explore/radr) | 0.054 | Zero-knowledge payments, identity, and communication protocol on Solana |
+| [MediCert](https://colosseum.com/projects/explore/medicert) | 0.053 | Issues privacy-preserving medical certificates as patient-owned NFTs |
+| [dezi network](https://colosseum.com/projects/explore/dezi-network) | 0.043 | Privacy-preserving clinical research framework using ZK proofs and federated learning |
+| [Book of Knowledge](https://colosseum.com/projects/explore/book-of-knowledge) | 0.032 | On-chain expertise verification for DAO governance (unrelated domain) |
+
+**Reading the gap:** the closest adjacent projects use ZK proofs for health *credentials*
+(MediCert), health *incentive mechanics* (Pulse), or clinical *research data* (dezi network) —
+none intercept raw biometric telemetry at the edge and mask it in real time before it ever
+leaves the device. That's the specific niche NoetoZyn targets. All similarity scores stayed
+under 0.06, indicating no close precedent in the searched corpus, though this reflects one
+search query against Copilot's project-search endpoint, not an exhaustive audit of every
+Solana hackathon submission to date.
 
 ---
 
