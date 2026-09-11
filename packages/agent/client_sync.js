@@ -24,6 +24,7 @@ import {
 import crypto from 'crypto';
 import fs from 'fs';
 import os from 'os';
+import { generateSlotSeededTelemetry } from './telemetry_bridge.js';
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -121,13 +122,6 @@ function maskTelemetry({ heartRate, eeg }) {
 
 function randomStreamId() {
   return crypto.randomBytes(16);
-}
-
-function slotSeededTelemetry(slot) {
-  return {
-    heartRate: 65 + (slot % 15),
-    eeg: 38 + (slot % 12),
-  };
 }
 
 function loadGuardian() {
@@ -255,7 +249,7 @@ async function runSingleShotSync({ connection, programId, guardian }) {
   console.log('=====================================================');
 
   const slot = await connection.getSlot('confirmed');
-  const { heartRate, eeg } = slotSeededTelemetry(slot);
+  const { heartRate, eeg } = generateSlotSeededTelemetry(slot);
   const telemetryStreamId = randomStreamId();
   const { pda: proofCheckpointPda } = deriveProofCheckpointPda(
     programId,
