@@ -76,9 +76,7 @@ If an unauthorized external application attempts to force-inject semantic payloa
 
 ## Competitive Landscape (Colosseum Copilot Search)
 
-A Colosseum Copilot project search (`/search/projects`) for terms matching NoetoZyn's
-core concept — biometric privacy firewall, health telemetry, wearable sensor, zero-knowledge
-proof — returned 6 total results, none of which are an exact match:
+A Colosseum Copilot project search (`/search/projects`) for terms matching NoetoZyn's core concept — biometric privacy firewall, health telemetry, wearable sensor, zero-knowledge proof — returned 6 total results, none of which are an exact match:
 
 | Project | Similarity | What it does |
 |---|---|---|
@@ -88,13 +86,7 @@ proof — returned 6 total results, none of which are an exact match:
 | [dezi network](https://colosseum.com/projects/explore/dezi-network) | 0.043 | Privacy-preserving clinical research framework using ZK proofs and federated learning |
 | [Book of Knowledge](https://colosseum.com/projects/explore/book-of-knowledge) | 0.032 | On-chain expertise verification for DAO governance (unrelated domain) |
 
-**Reading the gap:** the closest adjacent projects use ZK proofs for health *credentials*
-(MediCert), health *incentive mechanics* (Pulse), or clinical *research data* (dezi network) —
-none intercept raw biometric telemetry at the edge and mask it in real time before it ever
-leaves the device. That's the specific niche NoetoZyn targets. All similarity scores stayed
-under 0.06, indicating no close precedent in the searched corpus, though this reflects one
-search query against Copilot's project-search endpoint, not an exhaustive audit of every
-Solana hackathon submission to date.
+**Reading the gap:** The closest adjacent projects use ZK proofs for health *credentials* (MediCert), health *incentive mechanics* (Pulse), or clinical *research data* (dezi network) — none intercept raw biometric telemetry at the edge and mask it in real time before it ever leaves the device. That's the specific niche NoetoZyn targets. All similarity scores stayed under 0.06, indicating no close precedent in the searched corpus.
 
 ---
 
