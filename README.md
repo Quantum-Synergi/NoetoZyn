@@ -5,6 +5,20 @@ Developed by **Quantum Synergi** for the **Colosseum Crypto World's Fair Hackath
 
 Track Alignment: **DePIN** | **Crypto + AI Convergence** | **Infrastructure & Privacy**
 
+---
+
+## 🔗 Live Demo
+
+**[noetozyn-dashboard.onrender.com](https://noetozyn-dashboard.onrender.com)**
+
+A judge-facing, publicly deployed dashboard running against Solana devnet. All on-chain state shown (Program ID, slot, block time, transaction signatures, ProofCheckpoint account data) is real and independently verifiable on [Solana Explorer](https://explorer.solana.com/?cluster=devnet). Biometric telemetry is simulated / slot-seeded — deterministically derived from the current Solana slot, never real sensor data.
+
+**Deployed Program ID (devnet):** `RfGptereRgYUVAMwGNVepysjQgJjFbrXyarXnUX7Ama`
+**Current guardian wallet:** `9s2yADXmouAVAGwADrTan84g8jPeVoNFaW3RjiSRdZLM`
+
+**Visual convention used throughout the dashboard:** solid blue border = real on-chain/network state. Dashed coral border = simulated/local content — this distinction is never blurred.
+
+
 NoetoZyn establishes an unprecedented paradigm shift at the intersection of **Confidential AI Systems and Onchain Physical Infrastructure (DePIN)**. It is an autonomous edge agent engineered to return absolute cognitive, neurological, and biological sovereignty to humanity.
 
 ---
