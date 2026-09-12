@@ -31,6 +31,9 @@ As consumer wearables, smart health patches, and neural interfaces become mainst
 
 ## Technical Architecture & System Flow (Technical)
 
+![Privacy firewall data flow](docs/privacy-flow.svg)
+
+
 NoetoZyn replaces soft software text rules with **hard cryptographic boundaries** by uniting edge computation with the Solana ledger.
 
 ### **System Data Pipeline**
