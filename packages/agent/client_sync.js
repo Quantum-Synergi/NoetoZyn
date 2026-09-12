@@ -24,7 +24,6 @@ import {
 import crypto from 'crypto';
 import fs from 'fs';
 import os from 'os';
-console.log('[NoetoZyn] HOME resolves to:', os.homedir());
 import { generateSlotSeededTelemetry } from './telemetry_bridge.js';
 
 // ---------------------------------------------------------------------------
