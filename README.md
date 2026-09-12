@@ -47,28 +47,28 @@ As consumer wearables, smart health patches, and neural interfaces become mainst
 
 ![Privacy firewall data flow](docs/privacy-flow.svg)
 
+NoetoZyn is a Solana devnet demo that pairs a simulated biometric reading with real, independently verifiable on-chain state.
 
-NoetoZyn replaces soft software text rules with **hard cryptographic boundaries** by uniting edge computation with the Solana ledger.
+### System Data Pipeline
+* **Simulated telemetry generation:** a heart-rate/EEG-style reading is deterministically derived from the current Solana slot — not from any real sensor or wearable.
+* **Masking:** the reading is passed through a masking function before hashing, so raw values never leave the process that generates them.
+* **SHA-256 hashing:** the masked state is hashed, producing a fixed-size digest with no reversible link back to the fabricated inputs.
+* **On-chain commit:** the hash, a telemetry stream ID, and a timestamp are written to a Solana Anchor account (`ProofCheckpoint`), signed by a server-side guardian keypair.
+* **Guardian-controlled circuit breaker:** a `trigger_circuit_breaker` instruction can deactivate an active shield. This is a one-way action — it cannot be reactivated without a separate contract upgrade.
 
-### **System Data Pipeline**
-* **[Raw Biometric Telemetry Stream]** Intercepted via the local edge hardware gateway.
-* **[Somatic Edge Interceptor Layer]** Managed via an optimized elizaOS runtime environment executing independent of corporate cloud infrastructure.
-* **[Polymorphic Inversion Matrix]** Generates dynamic mathematical perturbations to mask personal identifiers while maintaining analytical macro-trends.
-* **[Zero-Knowledge Proof Settlement]** Compresses state validations without leaking biometric signatures.
-* **[Solana State Verification Anchor]** Settles proofs publicly for trusted third-party dApp authorization checks.
+### What's real vs. simulated
+Every piece of on-chain state — the program ID, transaction signatures, account data, slot numbers, and block times — is real and independently verifiable on [Solana Explorer](https://explorer.solana.com/?cluster=devnet). The biometric values themselves are always simulated / slot-seeded and are never presented as real sensor, medical, or health data. Throughout the dashboard, a solid blue border marks real on-chain/network state; a dashed coral border marks simulated or local-only content.
 
-### **1. Somatic Edge Interceptor Layer**
-A lightweight, optimized execution runtime intercepts raw biological telemetry streams (HRV, EEG, biometric vectors) directly at the local device layer before any external packet transmission occurs.
+### Dashboard Features
+* **Simulated capture → mask → commit → verify → proof** stepper walking through the full flow live.
+* **Try it with your own data:** upload a CSV (expects `heartRate` and `eeg` columns) or use built-in sample data. All processing happens entirely in the browser — nothing is uploaded to a server.
+* **Download Local Proof / Local Report (.json):** generates a browser-only proof artifact from local or captured data, downloaded directly to the user's device.
+* **Anchor this hash on devnet:** with explicit consent, publishes a locally-computed hash as a real, one-way devnet transaction.
+* **Proof Checkpoint Viewer:** reads and decodes the real on-chain `ProofCheckpoint` account (PDA, guardian, stream ID, masked hash, shield status, timestamp) directly from Solana devnet.
+* **Circuit breaker control:** guardian-signed, one-way deactivation of an active shield.
+* **Live Copilot novelty check:** queries Colosseum Copilot's project-search API in real time from the dashboard itself.
+* **Activity timeline:** a running, timestamped log of real actions taken in the current browser session (captures, commits, verifications, errors) — capped at 50 entries.
 
-### **2. Polymorphic Inversion Matrix**
-Rather than encrypting data statically—which leaves patterns vulnerable to advanced clustering algorithms—the agent maps biometric parameters onto shifting geometric noise vectors. 
-* **Mathematical Perturbation:** The engine injects localized noise tensors that successfully degrade the predictive accuracy of tracking models.
-* **Data Integrity:** The transformation filters out unique identity markers while preserving general macro-analytical trends (e.g., verifying a user is asleep or highly focused without exposing their unique heart pattern).
-
-### **3. Ephemeral On-Chain Verification Anchors**
-The agent hashes the masked state parameters and passes them into zero-knowledge state accounts on Solana via optimized, high-throughput program paths. External applications query the on-chain ledger to verify biometric authentication without ever seeing the raw vitals.
-
----
 
 ## Smart Contract Schema & State Specifications
 
