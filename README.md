@@ -76,18 +76,36 @@ If an unauthorized external application attempts to force-inject semantic payloa
 
 ## Competitive Landscape & Novelty (Colosseum Copilot Search)
 
-A comprehensive Colosseum Copilot project search (`/search/projects`) cross-referenced NoetoZyn's core architecture against the historic archive of **5,400+ Solana hackathon submissions**. Out of the entire corpus, only 6 total results were flag-mapped, confirming absolute novelty:
+NoetoZyn's core concept — biometric privacy firewall, edge-side telemetry masking,
+health/EEG data, zero-knowledge-adjacent proofs — was checked against Colosseum
+Copilot's project-search corpus (`/search/projects`), which spans 5,400+ Solana
+hackathon submissions.
+
+As of **September 11, 2026**, a live query returned 6 total results, with the
+closest matches shown below (similarity scores, live from the dashboard's
+`/api/copilot` endpoint):
 
 | Project | Similarity | What it does |
 |---|---|---|
-| [Pulse](https://colosseum.com) | 0.055 | Stakes crypto on health goals, tracked via wearables and ZK-verified habits |
-| [Radr](https://colosseum.com) | 0.054 | Zero-knowledge payments, identity, and communication protocol on Solana |
-| [MediCert](https://colosseum.com) | 0.053 | Issues privacy-preserving medical certificates as patient-owned NFTs |
-| [dezi network](https://colosseum.com) | 0.043 | Privacy-preserving clinical research framework using ZK proofs and federated learning |
-| [Book of Knowledge](https://colosseum.com) | 0.032 | On-chain expertise verification for DAO governance (unrelated domain) |
+| Spiral Safe | 0.054 | Simplifies Web3 onboarding by replacing seed phrases with passkeys and biometrics |
+| DTOX | 0.032 | Decentralized telemetry and monitoring infrastructure built on Solana |
+| zk-IoT | 0.032 | Zero-knowledge verification of IoT sensor data on Solana for private compliance payouts |
+| AIGun | 0.031 | An AI-driven exchange delivering trading signals and execution without noise |
+| AI FHE Healthcare IoT | 0.031 | Privacy-preserving AI combining healthcare IoT devices and Zama FHE with Solana rewards |
 
-**Reading the Gap:** The closest adjacent projects focus entirely on health *credentials* (MediCert), fitness *incentive mechanics* (Pulse), or macro *clinical research data* (dezi network). **Zero projects in the archive** intercept raw streaming biometric telemetry at the edge to poison predictive models and create a moving privacy firewall. Every single similarity metric scored under 0.06, providing Quantum Synergi with an entirely uncontested domain sector.
+**Reading the gap:** the closest adjacent projects use biometrics for *authentication*
+(Spiral Safe), general IoT/telemetry *infrastructure* (DTOX), IoT sensor *compliance*
+proofs (zk-IoT), or FHE-based *healthcare* data privacy (the last entry) — none of
+them intercept raw biometric telemetry at the edge and apply polymorphic masking
+in real time before it ever leaves the device, anchoring only the masked-state hash
+on-chain. All similarity scores stayed under 0.06.
 
+This reflects one search against Copilot's corpus at a single point in time, not a
+permanent or exhaustive claim — the corpus grows as new projects are submitted, so
+this table will drift. Rather than treat this snapshot as definitive, NoetoZyn's
+live dashboard queries Copilot's `/search/projects` endpoint directly and in real
+time: **run it yourself and see the current results**, rather than trusting a
+static table in a README.
 ---
 
 ## Ecosystem Alignment with the World's Fair
