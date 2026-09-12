@@ -24,6 +24,7 @@ import {
 import crypto from 'crypto';
 import fs from 'fs';
 import os from 'os';
+console.log('[NoetoZyn] HOME resolves to:', os.homedir());
 import { generateSlotSeededTelemetry } from './telemetry_bridge.js';
 
 // ---------------------------------------------------------------------------
@@ -92,9 +93,8 @@ function buildTriggerBreakerInstruction({
   programId,
   proofCheckpointPda,
   guardian,
-  reasonCode,
 }) {
-  const data = Buffer.concat([BREAKER_DISCRIMINATOR, Buffer.from([reasonCode])]);
+  const data = BREAKER_DISCRIMINATOR;
 
   return new TransactionInstruction({
     programId,
@@ -290,7 +290,21 @@ async function runSingleShotSync({ connection, programId, guardian }) {
     telemetry_stream_id: accountInfo.data.subarray(40, 56).toString('hex'),
     masked_state_hash: accountInfo.data.subarray(56, 88).toString('hex'),
     timestamp: accountInfo.data.readBigInt64LE(88).toString(),
+    is_active_shield: Boolean(accountInfo.data[96]),
   })}`);
+
+  console.log('[chain] sending trigger_circuit_breaker to verify shield flips to false...');
+  const breakerIx = buildTriggerBreakerInstruction({ programId, proofCheckpointPda, guardian });
+  const breakerTx = new Transaction().add(breakerIx);
+  breakerTx.feePayer = guardian.publicKey;
+  const { blockhash: bBlockhash, lastValidBlockHeight: bLvbh } = await connection.getLatestBlockhash('confirmed');
+  breakerTx.recentBlockhash = bBlockhash;
+  breakerTx.sign(guardian);
+  const breakerSig = await connection.sendRawTransaction(breakerTx.serialize(), { skipPreflight: false });
+  await connection.confirmTransaction({ signature: breakerSig, blockhash: bBlockhash, lastValidBlockHeight: bLvbh }, 'finalized');
+  const postBreakerAccount = await connection.getAccountInfo(proofCheckpointPda, 'finalized');
+  console.log(`[chain] trigger_circuit_breaker sent -- sig ${breakerSig}`);
+  console.log(`[chain] is_active_shield after breaker: ${Boolean(postBreakerAccount.data[96])}`);
 }
 
 // ---------------------------------------------------------------------------
