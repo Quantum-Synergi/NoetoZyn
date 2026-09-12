@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>NoetoZyn — a privacy firewall for biometric data on Solana</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="NoetoZyn masks a biometric reading and commits only its cryptographic hash to Solana. See the real, verifiable on-chain proof alongside a clearly labeled simulated demo reading." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #11151b;
+    --bg-elevated: #171c24;
+    --bg-elevated-2: #1d232c;
+    --text: #EDEAE2;
+    --text-muted: #9aa3ad;
+    --text-faint: #6b7480;
+
+    /* Real, on-chain, verifiable data. Reserved exclusively for this. */
+    --real: #5FA8D3;
+    --real-dim: #3d6f8f;
+    --real-bg: rgba(95,168,211,0.10);
+    --real-border: rgba(95,168,211,0.35);
+
+    /* Simulated / fabricated demo data. Reserved exclusively for this. */
+    --sim: #E8604C;
+    --sim-dim: #B9503F;
+    --sim-bg: rgba(232,96,76,0.08);
+    --sim-border: rgba(232,96,76,0.32);
+
+    /* Guardian / control accent (circuit breaker, steps). */
+    --shield: #7CAA92;
+    --shield-dim: #4d6b5c;
+
+    --border: rgba(237,234,226,0.12);
+    --border-strong: rgba(237,234,226,0.22);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .serif { font-family: 'Source Serif 4', Georgia, serif; }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+  .topnav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 28px 24px 0;
+  }
+  .wordmark { font-weight: 600; letter-spacing: -0.01em; font-size: 15px; }
+  .nav-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    border-bottom: 1px solid transparent;
+  }
+  .nav-link:hover { color: var(--text); border-bottom-color: var(--border-strong); }
+
+  .hero {
+    position: relative;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 60px 24px 36px;
+  }
+  h1.headline {
+    font-size: 2.4rem;
+    font-weight: 500;
+    line-height: 1.18;
+    max-width: 15ch;
+    margin: 0 0 18px;
+  }
+  .subhead {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 56ch;
+    margin: 0 0 28px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--text-muted); }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .legend-dot.real { background: var(--real); box-shadow: 0 0 6px var(--real); }
+  .legend-dot.sim { background: var(--sim); }
+
+  section { max-width: 620px; margin: 0 auto; padding: 40px 24px; }
+  section.wide { max-width: 780px; }
+  h2.section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.45rem;
+    font-weight: 500;
+    margin: 0 0 16px;
+  }
+  p { color: var(--text-muted); margin: 0 0 14px; max-width: 62ch; }
+  p:last-child { margin-bottom: 0; }
+
+  .divider { max-width: 780px; margin: 0 auto; border: none; border-top: 1px solid var(--border); }
+
+  /* --- Data-source cards: visually distinct real vs simulated --- */
+  .data-card {
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+  }
+  .data-card.real { background: var(--real-bg); border: 1px solid var(--real-border); }
+  .data-card.sim { background: var(--sim-bg); border: 1px dashed var(--sim-border); }
+
+  .data-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+  .data-card-title { font-size: 0.95rem; font-weight: 600; }
+  .tag {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+  .tag.real { background: rgba(95,168,211,0.18); color: var(--real); }
+  .tag.sim { background: rgba(232,96,76,0.16); color: var(--sim); }
+
+  .kv-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 6px 0;
+    font-size: 0.86rem;
+    border-bottom: 1px solid rgba(237,234,226,0.06);
+  }
+  .kv-row:last-child { border-bottom: none; }
+  .kv-label { color: var(--text-muted); white-space: nowrap; }
+  .kv-value { text-align: right; word-break: break-all; }
+  .kv-value.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.8rem; }
+
+  .big-metric { display: flex; gap: 28px; margin-bottom: 10px; }
+  .big-metric-item .num {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.9rem;
+  }
+  .data-card.real .num { color: var(--real); }
+  .data-card.sim .num { color: var(--sim); }
+  .big-metric-item .unit { font-size: 0.78rem; color: var(--text-faint); margin-left: 4px; }
+
+  .card-note { font-size: 0.78rem; color: var(--text-faint); margin-top: 10px; }
+  .explorer-link { font-size: 0.82rem; color: var(--real); text-decoration: none; border-bottom: 1px solid transparent; }
+  .explorer-link:hover { border-bottom-color: var(--real); }
+
+  .steps { display: flex; flex-direction: column; gap: 26px; margin-top: 8px; }
+  .step { display: flex; gap: 18px; }
+  .step-num { font-family: 'Source Serif 4', Georgia, serif; font-size: 1.1rem; color: var(--shield); width: 26px; flex-shrink: 0; padding-top: 2px; }
+  .step-body h3 { font-size: 1rem; font-weight: 600; margin: 0 0 6px; color: var(--text); }
+  .step-body p { margin: 0; font-size: 0.94rem; }
+
+  .usecases { display: flex; flex-direction: column; gap: 22px; margin-top: 8px; }
+  .usecase { border-left: 2px solid var(--shield-dim); padding-left: 18px; }
+  .usecase h3 { font-size: 0.98rem; font-weight: 600; margin: 0 0 4px; color: var(--text); }
+  .usecase p { font-size: 0.92rem; margin: 0; }
+
+  .dashboard-panel {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .cta {
+    display: inline-block;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .cta:hover { border-color: var(--shield); color: var(--shield); }
+
+  footer {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 32px 24px 56px;
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--text-faint); }
+
+  .error-text { color: var(--sim); font-size: 0.82rem; }
+
+  @media (max-width: 600px) {
+    h1.headline { font-size: 1.9rem; }
+    .big-metric { gap: 18px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topnav">
+    <span class="wordmark">NoetoZyn</span>
+    <a class="nav-link" href="#" id="dashboard-nav-link">Technical dashboard</a>
+  </div>
+
+  <div class="hero">
+    <h1 class="headline serif">Prove a reading happened. Never reveal what it was.</h1>
+    <p class="subhead">NoetoZyn masks a biometric reading and commits only a one-way cryptographic hash of it to Solana. Anyone can verify the proof independently. No one can recover the original reading from it.</p>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot real"></span>Real — live, on-chain, independently verifiable</span>
+      <span class="legend-item"><span class="legend-dot sim"></span>Simulated — a fabricated demo reading, not sensor data</span>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <section class="wide">
+    <h2 class="section-title serif">Solana network status <span class="tag real" style="vertical-align:2px;">real · live</span></h2>
+    <div class="data-card real">
+      <div class="data-card-head">
+        <span class="data-card-title">Devnet, queried directly from your browser</span>
+      </div>
+      <div class="kv-row"><span class="kv-label">Program</span><span class="kv-value mono" id="net-program">RfGptereRgYUVAMwGNVepysjQgJjFbrXyarXnUX7Ama</span></div>
+      <div class="kv-row"><span class="kv-label">Executable</span><span class="kv-value" id="net-executable">checking…</span></div>
+      <div class="kv-row"><span class="kv-label">Current slot</span><span class="kv-value" id="net-slot">checking…</span></div>
+      <div class="kv-row"><span class="kv-label">Block time</span><span class="kv-value" id="net-blocktime">checking…</span></div>
+      <div class="card-note">This page just asked Solana's public devnet RPC directly — the same network anyone can query. No server, no middleman.</div>
+    </div>
+  </section>
+
+  <section class="wide">
+    <h2 class="section-title serif">A verified proof <span class="tag real" style="vertical-align:2px;">real · on-chain</span></h2>
+    <div class="data-card real">
+      <div class="data-card-head">
+        <span class="data-card-title">Live account state, decoded in your browser</span>
+      </div>
+      <div class="kv-row"><span class="kv-label">Account</span><span class="kv-value mono" id="proof-pda">2ZuSRjmf3DPoQBDW5jL285QnQ9CBN4AVLLXnbw5pbxef</span></div>
+      <div class="kv-row"><span class="kv-label">Guardian wallet</span><span class="kv-value mono" id="proof-guardian">loading…</span></div>
+      <div class="kv-row"><span class="kv-label">Masked state hash</span><span class="kv-value mono" id="proof-hash">loading…</span></div>
+      <div class="kv-row"><span class="kv-label">Committed at</span><span class="kv-value" id="proof-timestamp">loading…</span></div>
+      <div class="kv-row"><span class="kv-label">Shield active</span><span class="kv-value" id="proof-shield">loading…</span></div>
+      <div class="card-note">
+        This is the same on-chain account fetched live, not a screenshot.
+        <a class="explorer-link" id="proof-explorer-link" target="_blank" rel="noopener" href="#">View raw account on Solana Explorer &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wide">
+    <h2 class="section-title serif">Simulated demo reading <span class="tag sim" style="vertical-align:2px;">simulated · fabricated</span></h2>
+    <div class="data-card sim">
+      <div class="data-card-head">
+        <span class="data-card-title">Not a sensor reading — computed from the slot number above</span>
+      </div>
+      <div class="big-metric">
+        <div class="big-metric-item"><span class="num" id="sim-hr">--</span><span class="unit">bpm</span></div>
+        <div class="big-metric-item"><span class="num" id="sim-eeg">--</span><span class="unit">&micro;V EEG</span></div>
+      </div>
+      <div class="card-note">This number is deterministically derived by hashing the current Solana slot — it is not a real heartbeat or brainwave. It exists to demonstrate what a real sensor reading would flow through before being masked and hashed above. No sensor, wearable, or biological signal is involved anywhere on this page.</div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <section>
+    <h2 class="section-title serif">Why this exists</h2>
+    <p>Wearables and health apps stream intimate biological signals into systems you can't inspect or audit. You're asked to trust that the company holding your heart rate, EEG, or activity data won't misuse it — with no independent way to check, and no way to revoke access once it's given.</p>
+    <p>NoetoZyn is a working proof of concept for a different model: the raw reading never leaves the device in a recoverable form, and what does get published is checkable by anyone, forever, on a public ledger.</p>
+  </section>
+
+  <section>
+    <h2 class="section-title serif">How it actually works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num serif">1</div>
+        <div class="step-body">
+          <h3>A reading is taken</h3>
+          <p>A sensor captures something like heart rate or EEG activity. In this demo, that reading is fabricated from the current Solana slot number rather than measured, so the flow can be shown without real hardware.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num serif">2</div>
+        <div class="step-body">
+          <h3>The reading is masked and hashed</h3>
+          <p>Random jitter is added, then the result is passed through a one-way cryptographic hash (SHA-256). The original number can't be recovered from the hash.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num serif">3</div>
+        <div class="step-body">
+          <h3>Only the hash is committed on-chain</h3>
+          <p>The hash, a guardian's wallet signature, and a timestamp are written to a Solana account. Anyone can verify the commitment exists and hasn't been altered — without ever learning the reading it came from.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num serif">4</div>
+        <div class="step-body">
+          <h3>The guardian holds an on-chain switch</h3>
+          <p>A boolean flag on that same account, <code class="mono">is_active_shield</code>, can be flipped by the guardian's wallet at any time via a signed transaction — itself a public, auditable action, not a hidden setting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <section class="wide">
+    <h2 class="section-title serif">Where this could go</h2>
+    <p style="margin-bottom: 22px;">These are potential directions this kind of infrastructure could support — not features this demo currently implements.</p>
+    <div class="usecases">
+      <div class="usecase">
+        <h3>Health insurance</h3>
+        <p>Confirm a policyholder met an activity or vitals threshold, without the insurer ever holding the raw health log that created the liability in the first place.</p>
+      </div>
+      <div class="usecase">
+        <h3>Workplace wellness programs</h3>
+        <p>Employers could verify program participation to unlock a benefit, without becoming custodians of employee health data they never wanted to store.</p>
+      </div>
+      <div class="usecase">
+        <h3>Clinical trials and telehealth</h3>
+        <p>Sponsors could get tamper-evident proof that monitoring happened on schedule, without the exposure of holding raw patient signal data.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wide">
+    <div class="dashboard-panel">
+      <div>
+        <div style="font-weight:600; font-size:0.92rem; margin-bottom:4px;">Want to see the underlying build?</div>
+        <div style="font-size:0.85rem; color:var(--text-muted);">The technical dashboard shows the same data plus commit tooling and search. It needs the project's live server running.</div>
+      </div>
+      <a class="cta" href="#" id="dashboard-nav-link-2">Open technical dashboard</a>
+    </div>
+  </section>
+
+  <footer>
+    NoetoZyn &middot; built on Solana devnet for the Colosseum Crypto World's Fair Hackathon.
+    The network status and verified-proof panels above are live, real, and independently checkable.
+    The demo reading panel is clearly labeled and fabricated for demonstration only — no real sensor or medical data is collected anywhere on this page.
+  </footer>
+
+<script>
+// ---------------------------------------------------------------------------
+// Configuration
+// ---------------------------------------------------------------------------
+// Update this once the technical dashboard is deployed somewhere reachable
+// (e.g. a Codespaces forwarded URL, or a small always-on host). Until then
+// it points at localhost, which only works if you're running the dev
+// server on the same machine viewing this page.
+const DASHBOARD_URL = 'http://localhost:3000/status';
+
+const RPC_ENDPOINT = 'https://api.devnet.solana.com';
+const PROGRAM_ID = 'RfGptereRgYUVAMwGNVepysjQgJjFbrXyarXnUX7Ama';
+const PROOF_PDA = '2ZuSRjmf3DPoQBDW5jL285QnQ9CBN4AVLLXnbw5pbxef';
+const EXPLORER_ACCOUNT_URL = `https://explorer.solana.com/address/${PROOF_PDA}?cluster=devnet`;
+
+document.getElementById('dashboard-nav-link').href = DASHBOARD_URL;
+document.getElementById('dashboard-nav-link-2').href = DASHBOARD_URL;
+document.getElementById('proof-explorer-link').href = EXPLORER_ACCOUNT_URL;
+
+// ---------------------------------------------------------------------------
+// Minimal JSON-RPC helper (no @solana/web3.js dependency needed for this page)
+// ---------------------------------------------------------------------------
+async function rpcCall(method, params) {
+  const res = await fetch(RPC_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
+  });
+  if (!res.ok) throw new Error(`RPC HTTP ${res.status}`);
+  const body = await res.json();
+  if (body.error) throw new Error(body.error.message || 'RPC error');
+  return body.result;
+}
+
+function base64ToBytes(b64) {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+
+// Solana's base58 alphabet, for encoding a 32-byte pubkey without a library.
+const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+function bytesToBase58(bytes) {
+  let digits = [0];
+  for (let i = 0; i < bytes.length; i++) {
+    let carry = bytes[i];
+    for (let j = 0; j < digits.length; j++) {
+      carry += digits[j] << 8;
+      digits[j] = carry % 58;
+      carry = (carry / 58) | 0;
+    }
+    while (carry > 0) {
+      digits.push(carry % 58);
+      carry = (carry / 58) | 0;
+    }
+  }
+  let leadingZeros = 0;
+  for (let i = 0; i < bytes.length && bytes[i] === 0; i++) leadingZeros++;
+  let result = '1'.repeat(leadingZeros);
+  for (let i = digits.length - 1; i >= 0; i--) result += BASE58_ALPHABET[digits[i]];
+  return result;
+}
+
+function readInt64LE(bytes, offset) {
+  let value = 0n;
+  for (let i = 7; i >= 0; i--) {
+    value = (value << 8n) | BigInt(bytes[offset + i]);
+  }
+  return value;
+}
+
+function bytesToHex(bytes) {
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ---------------------------------------------------------------------------
+// Real panel 1: network status
+// ---------------------------------------------------------------------------
+async function refreshNetworkStatus() {
+  try {
+    const [slot, accountInfo] = await Promise.all([
+      rpcCall('getSlot', [{ commitment: 'confirmed' }]),
+      rpcCall('getAccountInfo', [PROGRAM_ID, { encoding: 'base64' }]),
+    ]);
+    document.getElementById('net-slot').textContent = slot;
+    document.getElementById('net-executable').textContent =
+      accountInfo && accountInfo.value && accountInfo.value.executable ? 'Yes' : 'No';
+
+    try {
+      const blockTime = await rpcCall('getBlockTime', [slot]);
+      document.getElementById('net-blocktime').textContent = blockTime
+        ? new Date(blockTime * 1000).toLocaleString()
+        : 'unavailable for this slot';
+    } catch (err) {
+      document.getElementById('net-blocktime').textContent = 'unavailable for this slot';
+    }
+  } catch (err) {
+    document.getElementById('net-slot').innerHTML = '<span class="error-text">RPC unreachable: ' + err.message + '</span>';
+    document.getElementById('net-executable').textContent = '--';
+    document.getElementById('net-blocktime').textContent = '--';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Real panel 2: verified proof account, decoded client-side
+// Layout matches ProofCheckpoint in lib.rs / client_sync.js:
+//   [0:8]   Anchor discriminator
+//   [8:40]  guardian_wallet (Pubkey, 32 bytes)
+//   [40:56] telemetry_stream_id ([u8;16])
+//   [56:88] masked_state_hash ([u8;32])
+//   [88:96] timestamp (i64)
+//   [96]    is_active_shield (bool)
+// ---------------------------------------------------------------------------
+async function refreshVerifiedProof() {
+  try {
+    const result = await rpcCall('getAccountInfo', [PROOF_PDA, { encoding: 'base64' }]);
+    if (!result || !result.value) {
+      throw new Error('account not found');
+    }
+    const data = base64ToBytes(result.value.data[0]);
+
+    const guardianBytes = data.slice(8, 40);
+    const maskedHash = data.slice(56, 88);
+    const timestamp = readInt64LE(data, 88);
+    const isActiveShield = Boolean(data[96]);
+
+    document.getElementById('proof-guardian').textContent = bytesToBase58(guardianBytes);
+    document.getElementById('proof-hash').textContent = '0x' + bytesToHex(maskedHash);
+    document.getElementById('proof-timestamp').textContent =
+      new Date(Number(timestamp) * 1000).toLocaleString();
+    document.getElementById('proof-shield').textContent = isActiveShield ? 'true' : 'false';
+  } catch (err) {
+    document.getElementById('proof-guardian').innerHTML = '<span class="error-text">Could not load: ' + err.message + '</span>';
+    document.getElementById('proof-hash').textContent = '--';
+    document.getElementById('proof-timestamp').textContent = '--';
+    document.getElementById('proof-shield').textContent = '--';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Simulated panel: reproduces telemetry_bridge.js's exact logic client-side
+// so the number matches what the server-side dashboard would show for the
+// same slot. This is fabricated data -- never presented as real.
+// ---------------------------------------------------------------------------
+async function sha256Bytes(message) {
+  const enc = new TextEncoder().encode(message);
+  const digest = await crypto.subtle.digest('SHA-256', enc);
+  return new Uint8Array(digest);
+}
+
+function readUInt16BE(bytes, offset) {
+  return (bytes[offset] << 8) + bytes[offset + 1];
+}
+
+async function refreshSimulatedTelemetry(slot) {
+  if (slot === undefined || slot === null) return;
+  const digest = await sha256Bytes(`noetozyn-slot-seed-${slot}`);
+  const hrFraction = readUInt16BE(digest, 0) / 0x10000;
+  const eegFraction = readUInt16BE(digest, 2) / 0x10000;
+  const heartRate = 68 + Math.round(hrFraction * 20);
+  const eeg = (40 + eegFraction * 15).toFixed(1);
+  document.getElementById('sim-hr').textContent = heartRate;
+  document.getElementById('sim-eeg').textContent = eeg;
+}
+
+async function refreshAll() {
+  await refreshNetworkStatus();
+  await refreshVerifiedProof();
+  try {
+    const slot = await rpcCall('getSlot', [{ commitment: 'confirmed' }]);
+    await refreshSimulatedTelemetry(slot);
+  } catch (err) {
+    // Network status panel already surfaces this error; nothing further to do.
+  }
+}
+
+refreshAll();
+setInterval(refreshAll, 8000);
+</script>
+</body>
+</html>
