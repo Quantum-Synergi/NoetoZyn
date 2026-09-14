@@ -11,7 +11,7 @@ Track Alignment: **DePIN** | **Crypto + AI Convergence** | **Infrastructure & Pr
 
 **[noetozyn-dashboard.onrender.com](https://noetozyn-dashboard.onrender.com)**
 
-A judge-facing, publicly deployed dashboard running against Solana devnet. All on-chain state shown (Program ID, slot, block time, transaction signatures, ProofCheckpoint account data) is real and independently verifiable on [Solana Explorer](https://explorer.solana.com/?cluster=devnet). Biometric telemetry is simulated / slot-seeded — deterministically derived from the current Solana slot, never real sensor data.
+An end-user, publicly deployed dashboard running against Solana devnet. All on-chain state shown (Program ID, slot, block time, transaction signatures, ProofCheckpoint account data) is real and independently verifiable on [Solana Explorer](https://explorer.solana.com/?cluster=devnet). Biometric telemetry is simulated / slot-seeded — deterministically derived from the current Solana slot, never real sensor data.
 
 **Deployed Program ID (devnet):** `RfGptereRgYUVAMwGNVepysjQgJjFbrXyarXnUX7Ama`
 **Current guardian wallet:** `9s2yADXmouAVAGwADrTan84g8jPeVoNFaW3RjiSRdZLM`
