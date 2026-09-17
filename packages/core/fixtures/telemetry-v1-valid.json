@@ -1,0 +1,7 @@
+{
+  "schema": "telemetry-v1",
+  "records": [
+    { "heartRate": 72, "eeg": 41 },
+    { "heartRate": 73.5, "eeg": -40.25 }
+  ]
+}

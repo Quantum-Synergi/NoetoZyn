@@ -1,0 +1,12 @@
+{
+  "receiptVersion": "noetozyn-proof-receipt-v1",
+  "schema": "telemetry-v1",
+  "hashAlgorithm": "SHA-256",
+  "canonicalization": "telemetry-v1-json-c14n-1",
+  "streamId": "000102030405060708090a0b0c0d0e0f",
+  "recordCount": 2,
+  "proofHash": "sha256:5f6341e7ea8de52c136a840e680c06e45945023319a170aeda568b2374b4f5c4",
+  "createdAt": "2026-09-17T00:00:00.000Z",
+  "source": "local-csv",
+  "anchor": { "status": "not-anchored" }
+}
