@@ -1,0 +1,11 @@
+[
+  {
+    "name": "two-row-basic",
+    "records": [
+      { "heartRate": 72, "eeg": 41 },
+      { "heartRate": 73.5, "eeg": -40.25 }
+    ],
+    "preimage": "noetozyn-proof-v1\nschema=telemetry-v1\nrecord-count=2\ncanonical-length=59\ncanonical=[{\"heartRate\":72,\"eeg\":41},{\"heartRate\":73.5,\"eeg\":-40.25}]",
+    "proofHash": "sha256:5f6341e7ea8de52c136a840e680c06e45945023319a170aeda568b2374b4f5c4"
+  }
+]

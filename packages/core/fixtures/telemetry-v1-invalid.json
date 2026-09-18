@@ -1,0 +1,6 @@
+[
+  { "name": "missing-field", "csv": "heartRate,eeg\n72" },
+  { "name": "out-of-range", "csv": "heartRate,eeg\n251,0" },
+  { "name": "exponent", "csv": "heartRate,eeg\n1e2,0" },
+  { "name": "quoted", "csv": "heartRate,eeg\n\"72\",41" }
+]
