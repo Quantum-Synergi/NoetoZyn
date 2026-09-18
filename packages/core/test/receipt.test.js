@@ -25,6 +25,14 @@ test('validates structure separately and rejects prohibited or unknown fields', 
   const value = await receipt();
   assert.equal(validateReceipt(value), value);
   assert.equal(validateReceipt(receiptFixture), receiptFixture);
+  assert.equal(validateReceipt({ ...receiptFixture, recordCount: 1 }).recordCount, 1);
+  assert.equal(validateReceipt({ ...receiptFixture, recordCount: 1000 }).recordCount, 1000);
+  for (const recordCount of [0, -1, 1.5, 1001]) {
+    assert.throws(() => validateReceipt({ ...receiptFixture, recordCount }), /recordCount/);
+  }
+  for (const createdAt of ['2026-02-30T00:00:00.000Z', '2026-13-01T00:00:00.000Z', 'not-a-date']) {
+    assert.throws(() => validateReceipt({ ...receiptFixture, createdAt }), /createdAt/);
+  }
   for (const field of ['heartRate', 'eeg', 'raw', 'csv', 'filename', 'privateKey', 'seedPhrase', 'walletSecret', 'credential', 'token']) {
     assert.throws(() => validateReceipt({ ...value, [field]: 'forbidden' }), /prohibited/);
   }

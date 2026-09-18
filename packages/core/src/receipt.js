@@ -1,4 +1,4 @@
-import { CANONICALIZATION, TELEMETRY_SCHEMA, validateRecords } from './schema.js';
+import { CANONICALIZATION, MAX_ROWS, TELEMETRY_SCHEMA, validateRecords } from './schema.js';
 import { bytesToHex, computeProofHash } from './hash.js';
 
 const RECEIPT_VERSION = 'noetozyn-proof-receipt-v1';
@@ -32,9 +32,10 @@ export function validateReceipt(receipt) {
   if (receipt.receiptVersion !== RECEIPT_VERSION) fail('unsupported receipt version');
   if (receipt.schema !== TELEMETRY_SCHEMA || receipt.hashAlgorithm !== 'SHA-256' || receipt.canonicalization !== CANONICALIZATION) fail('receipt contract fields are invalid');
   if (!STREAM_PATTERN.test(receipt.streamId)) fail('streamId must be 32 lowercase hexadecimal characters');
-  if (!Number.isSafeInteger(receipt.recordCount) || receipt.recordCount < 1) fail('recordCount must be a positive integer');
+  if (!Number.isSafeInteger(receipt.recordCount) || receipt.recordCount < 1 || receipt.recordCount > MAX_ROWS) fail(`recordCount must be an integer from 1 to ${MAX_ROWS}`);
   if (!HASH_PATTERN.test(receipt.proofHash)) fail('proofHash must be sha256 followed by 64 lowercase hexadecimal characters');
-  if (typeof receipt.createdAt !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(receipt.createdAt) || Number.isNaN(Date.parse(receipt.createdAt))) fail('createdAt must be an ISO 8601 UTC timestamp');
+  const parsedCreatedAt = typeof receipt.createdAt === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(receipt.createdAt) ? Date.parse(receipt.createdAt) : Number.NaN;
+  if (Number.isNaN(parsedCreatedAt) || new Date(parsedCreatedAt).toISOString() !== receipt.createdAt) fail('createdAt must be an ISO 8601 UTC timestamp');
   if (receipt.source !== 'local-csv') fail('source must be local-csv');
   if (!receipt.anchor || typeof receipt.anchor !== 'object' || Object.keys(receipt.anchor).length !== 1 || receipt.anchor.status !== 'not-anchored') fail('anchor status must be not-anchored');
   return receipt;
